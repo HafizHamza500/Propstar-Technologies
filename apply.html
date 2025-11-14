@@ -119,8 +119,11 @@
       <input id="email" type="email" placeholder="Email" required
         class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
 
-      <input id="phone" type="text" placeholder="Phone Number" required
-        class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+      <div class="relative">
+        <span class="absolute left-3 top-2 text-white font-semibold pointer-events-none">+92</span>
+        <input id="phone" type="text" placeholder="Phone Number" required maxlength="10"
+          class="w-full bg-gray-800 border border-gray-700 rounded-md pl-12 pr-3 py-2 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+      </div>
 
       <!-- Experience -->
       <label class="block">
@@ -165,7 +168,7 @@
 
       <label class="block">
         <span class="text-sm text-gray-300">Upload CV</span>
-        <input id="cv" type="file" accept=".pdf,.doc,.docx" required
+        <input id="cv" type="file" accept=".pdf,.doc,.docx"
           class="block w-full mt-1 text-sm text-gray-400
             file:mr-3 file:py-2 file:px-4 file:rounded-md
             file:border-0 file:bg-yellow-500 file:text-black
@@ -286,7 +289,7 @@ ageInput.addEventListener("input", e => {
 const phone = document.getElementById("phone");
 phone.addEventListener("input", e => {
   let val = e.target.value.replace(/[^0-9]/g, "");
-  if (val.length > 11) val = val.slice(0, 11);
+  if (val.length > 10) val = val.slice(0, 10);
   e.target.value = val;
 });
 
@@ -331,10 +334,50 @@ function toBase64(file) {
   });
 }
 
+ function btnsubmit(formData)  {
+  // Convert FormData to a plain object
+  const dataObject = {};
+  for (let [key, value] of formData.entries()) {
+    dataObject[key] = value;
+  }
+
+  console.log("Sending data to API:", dataObject);
+
+  const requestBody = {
+    values: dataObject
+  };
+
+  return fetch("https://propstar.evagron.com/api/method/hrm_addons.web_form_handler.applicant_web_form", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  })
+    .then(response => {
+      console.log("Response status:", response.status);
+      // Parse response first
+      return response.json().then(data => {
+        if (response.status === 200 || response.ok) {
+          console.log("API Response Success:", data);
+          return { success: true, data: data };
+        } else {
+          console.error("API Error Response:", data);
+          throw new Error(`HTTP error! status: ${response.status} - ${data.message || JSON.stringify(data)}`);
+        }
+      });
+    })
+    .catch(error => {
+      console.error("Error fetching API:", error);
+      return { success: false, error: error.message };
+    });
+}
+
+
 // Form Submit
 const applyForm = document.getElementById("applyForm");
 applyForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+  e.preventDefault()
   const submitBtn = document.getElementById("submitBtn");
   const btnText = document.getElementById("btnText");
   btnText.textContent = "Submitting...";
@@ -359,7 +402,7 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("fullName", document.getElementById("fullName").value);
     formData.append("age", document.getElementById("age").value);
     formData.append("email", document.getElementById("email").value);
-    formData.append("phone", document.getElementById("phone").value);
+    formData.append("phone", "92" + document.getElementById("phone").value);
     // formData.append("qualification", document.getElementById("qualification").value);
     formData.append("experience", document.getElementById("experience").value);
     formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
@@ -367,15 +410,13 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("fileName", fileName);
     formData.append("mimeType", mimeType);
 
-    console.log(formData);
 
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzdSOBQU_KsGNlPRg6zLdASjZ51VLL_QfMvRTu1VrMQD3p29_vTJDXelf24Vt5DaNmpyA/exec", {
-      method: "POST",
-      body: formData,
-    });
 
-    const result = await res.json();
-    if (result.result === "success") {
+
+
+
+    const result = await btnsubmit(formData);
+    if (result.success) {
       const userName = document.getElementById("fullName").value;
       Swal.fire({
         icon: "success",
@@ -453,7 +494,7 @@ email.addEventListener("input", e => {
 });
 
 phone.addEventListener("input", e => {
-  if (e.target.value.length !== 11) {
+  if (e.target.value.length !== 10) {
     showError(e.target, "Phone must be 11 digits.", "phoneError");
   } else {
     hideError(e.target, "phoneError");
@@ -468,14 +509,14 @@ expSelect.addEventListener("input", e => {
   }
 });
 
-const qualification = document.getElementById("qualification");
-qualification.addEventListener("input", e => {
-  if (!e.target.value) {
-    showError(e.target, "Select a qualification.", "qualificationError");
-  } else {
-    hideError(e.target, "qualificationError");
-  }
-});
+// const qualification = document.getElementById("qualification");
+// qualification.addEventListener("input", e => {
+//   if (!e.target.value) {
+//     showError(e.target, "Select a qualification.", "qualificationError");
+//   } else {
+//     hideError(e.target, "qualificationError");
+//   }
+// });
 
 // On Submit → Scroll to first error
 applyForm.addEventListener("submit", e => {
