@@ -149,7 +149,7 @@
         </label>
       </div>
 
-      <label class="block">
+      <!-- <label class="block">
         <span class="text-sm text-gray-300">Academic Qualification</span>
         <select id="qualification" required
           class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
@@ -159,7 +159,7 @@
           <option>Bachelors</option>
           <option>Masters</option>
         </select>
-      </label>
+      </label> -->
 
       <input type="hidden" id="jobPosition">
 
@@ -360,7 +360,7 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("age", document.getElementById("age").value);
     formData.append("email", document.getElementById("email").value);
     formData.append("phone", document.getElementById("phone").value);
-    formData.append("qualification", document.getElementById("qualification").value);
+    // formData.append("qualification", document.getElementById("qualification").value);
     formData.append("experience", document.getElementById("experience").value);
     formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
     formData.append("fileData", fileBase64);
