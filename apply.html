@@ -127,10 +127,9 @@
 
       <!-- Gender -->
       <label class="block">
-        <span class="text-sm text-gray-300">Gender</span>
-        <select id="experience" required
+        <select id="gender" required
           class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-          <option value="" disabled selected>-- Select --</option>
+          <option value="" disabled selected>-- Gender --</option>
           <option>Male</option>
           <option>Female</option>
         </select>
@@ -416,6 +415,7 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("age", document.getElementById("age").value);
     formData.append("email", document.getElementById("email").value);
     formData.append("phone", "92" + document.getElementById("phone").value);
+    formData.append("gender", document.getElementById("gender").value);
     // formData.append("qualification", document.getElementById("qualification").value);
     // formData.append("experience", document.getElementById("experience").value);
     // formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
@@ -509,6 +509,17 @@ phone.addEventListener("input", e => {
     showError(e.target, "Phone must be 11 digits.", "phoneError");
   } else {
     hideError(e.target, "phoneError");
+  }
+});
+
+// Gender Validation
+const gender = document.getElementById("gender");
+
+gender.addEventListener("change", e => {
+  if (!e.target.value) {
+    showError(e.target, "Please select a gender.", "genderError");
+  } else {
+    hideError(e.target, "genderError");
   }
 });
 
