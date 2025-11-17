@@ -290,35 +290,18 @@ function toBase64(file) {
 }
 
  function btnsubmit(formData)  {
-  // Convert FormData to a plain object
-  const dataObject = {};
-  for (let [key, value] of formData.entries()) {
-    dataObject[key] = value;
-  }
-
-  console.log("Sending data to API:", dataObject);
-
-  const requestBody = {
-    values: dataObject
-  };
-
+  // Send FormData directly so the browser sets multipart/form-data boundary
   return fetch("https://propstar.evagron.com/api/method/hrm_addons.web_form_handler.applicant_web_form", {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(requestBody)
+    body: formData
   })
     .then(response => {
-      console.log("Response status:", response.status);
-      // Parse response first
       return response.json().then(data => {
-        if (response.status === 200 || response.ok) {
-          console.log("API Response Success:", data);
+        if (response.ok) {
           return { success: true, data: data };
         } else {
           console.error("API Error Response:", data);
-          throw new Error(`HTTP error! status: ${response.status} - ${data.message || JSON.stringify(data)}`);
+          return { success: false, error: data.message || JSON.stringify(data) };
         }
       });
     })
@@ -338,18 +321,8 @@ applyForm.addEventListener("submit", async (e) => {
   btnText.textContent = "Submitting...";
   submitBtn.disabled = true;
 
-  try {
+    try {
     const file = cvInput.files[0];
-    let fileBase64 = "";
-    let fileName = "";
-    let mimeType = "";
-
-    if (file) {
-      const base64File = await toBase64(file);
-      fileBase64 = base64File.split(",")[1];
-      fileName = file.name;
-      mimeType = file.type;
-    }
 
     const formData = new FormData();
     formData.append("jobTitle", document.getElementById("jobPosition").value);
@@ -359,12 +332,12 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("phone", "92" + document.getElementById("phone").value);
     formData.append("email", document.getElementById("email").value);
     formData.append("gender", document.getElementById("gender").value);
-    formData.append("fileData", fileBase64);
-    formData.append("fileName", fileName);
-    formData.append("mimeType", mimeType);
-
-
-
+    // Attach the actual file object so server receives a file part named 'cv'
+    if (file) {
+      formData.append("cv", file);
+      formData.append("fileName", file.name);
+      formData.append("mimeType", file.type);
+    }
 
     const result = await btnsubmit(formData);
     if (result.success) {
