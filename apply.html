@@ -121,7 +121,7 @@
 
       <div class="relative">
         <span class="absolute left-3 top-2 text-white font-semibold pointer-events-none">+92</span>
-        <input id="phone" type="text" placeholder="Phone Number" required maxlength="11"
+        <input id="phone" type="text" placeholder="Phone Number" required maxlength="10"
           class="w-full bg-gray-800 border border-gray-700 rounded-md pl-12 pr-3 py-2 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
       </div>
 
@@ -180,7 +180,7 @@
 
       <label class="block">
         <span class="text-sm text-gray-300">Upload CV</span>
-        <input id="cv" name="cv" type="file" accept=".pdf,.doc,.docx"
+        <input id="cv" type="file" accept=".pdf,.doc,.docx"
           class="block w-full mt-1 text-sm text-gray-400
             file:mr-3 file:py-2 file:px-4 file:rounded-md
             file:border-0 file:bg-yellow-500 file:text-black
@@ -299,29 +299,11 @@ ageInput.addEventListener("input", e => {
 });
 
 const phone = document.getElementById("phone");
-// Keep only digits and allow up to 11 chars (to accept leading 0, e.g., 0322...)
 phone.addEventListener("input", e => {
   let val = e.target.value.replace(/[^0-9]/g, "");
-  if (val.length > 11) val = val.slice(0, 11);
+  if (val.length > 10) val = val.slice(0, 10);
   e.target.value = val;
 });
-
-// Normalize phone to server-expected 12-digit format (e.g. 923221234567)
-function normalizePhone(raw) {
-  if (!raw) return "";
-  let v = String(raw).replace(/\D/g, "");
-  // If user entered full with country code (e.g., 923221234567), accept if valid
-  if (v.length === 12 && v.startsWith('92')) return v;
-  // If user entered local with leading 0 (e.g., 03221234567) -> strip leading 0
-  if (v.length === 11 && v.startsWith('0')) {
-    const stripped = v.slice(1);
-    if (stripped.length === 10) return '92' + stripped;
-  }
-  // If user entered local without leading 0 (e.g., 3221234567) -> length 10
-  if (v.length === 10) return '92' + v;
-  // Otherwise invalid
-  return "";
-}
 
 // CV Validation
 const cvInput = document.getElementById("cv");
@@ -329,32 +311,13 @@ const cvError = document.getElementById("cvError");
 cvInput.addEventListener("change", () => {
   const file = cvInput.files[0];
   if (file) {
-    const allowedMime = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ];
-
-    // If browser doesn't provide MIME type (some older browsers/OS combos), fall back to extension check
-    const name = file.name || "";
-    const extOk = /\.(pdf|docx?|DOCX?)$/.test(name);
-
-    if (file.type) {
-      if (!allowedMime.includes(file.type)) {
-        cvError.classList.remove("hidden");
-        cvInput.value = "";
-        return;
-      }
+    const allowed = ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+    if (!allowed.includes(file.type)) {
+      cvError.classList.remove("hidden");
+      cvInput.value = "";
     } else {
-      // No MIME: rely on extension
-      if (!extOk) {
-        cvError.classList.remove("hidden");
-        cvInput.value = "";
-        return;
-      }
+      cvError.classList.add("hidden");
     }
-
-    cvError.classList.add("hidden");
   }
 });
 
@@ -383,23 +346,38 @@ function toBase64(file) {
   });
 }
 
-function btnsubmit(formData) {
-  // Send FormData multipart/form-data so server can receive the file as a file upload.
-  // Do NOT set Content-Type header; browser will set the boundary for multipart.
+ function btnsubmit(formData)  {
+  // Convert FormData to a plain object
+  const dataObject = {};
+  for (let [key, value] of formData.entries()) {
+    dataObject[key] = value;
+  }
+
+  console.log("Sending data to API:", dataObject);
+
+  const requestBody = {
+    values: dataObject
+  };
+
   return fetch("https://propstar.evagron.com/api/method/hrm_addons.web_form_handler.applicant_web_form", {
     method: 'POST',
-    body: formData
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
   })
-    .then(async response => {
-      const text = await response.text();
-      let data = null;
-      try { data = JSON.parse(text); } catch (e) { data = text; }
-      if (response.ok) {
-        return { success: true, data };
-      } else {
-        console.error("API Error Response:", data);
-        return { success: false, error: typeof data === 'string' ? data : (data && data.message) || JSON.stringify(data) };
-      }
+    .then(response => {
+      console.log("Response status:", response.status);
+      // Parse response first
+      return response.json().then(data => {
+        if (response.status === 200 || response.ok) {
+          console.log("API Response Success:", data);
+          return { success: true, data: data };
+        } else {
+          console.error("API Error Response:", data);
+          throw new Error(`HTTP error! status: ${response.status} - ${data.message || JSON.stringify(data)}`);
+        }
+      });
     })
     .catch(error => {
       console.error("Error fetching API:", error);
@@ -436,13 +414,7 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("fullName", document.getElementById("fullName").value);
     formData.append("age", document.getElementById("age").value);
     formData.append("email", document.getElementById("email").value);
-    // Normalize phone before sending. Server expects exactly 12 digits (country code + local)
-    const normalizedPhone = normalizePhone(document.getElementById("phone").value);
-    if (!normalizedPhone) {
-      showError(document.getElementById("phone"), "Enter a valid phone number before submitting.", "phoneError");
-      throw new Error('Invalid phone number');
-    }
-    formData.append("phone", normalizedPhone);
+    formData.append("phone", "92" + document.getElementById("phone").value);
     formData.append("gender", document.getElementById("gender").value);
     // formData.append("qualification", document.getElementById("qualification").value);
     // formData.append("experience", document.getElementById("experience").value);
@@ -450,12 +422,6 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("fileData", fileBase64);
     formData.append("fileName", fileName);
     formData.append("mimeType", mimeType);
-    // Also append actual File object so server endpoints that expect multipart uploads receive the file
-    if (file) {
-      formData.append("cv", file, fileName);
-      // Keep a copy under a generic key some servers might expect
-      formData.append("file", file, fileName);
-    }
 
 
 
@@ -538,9 +504,8 @@ email.addEventListener("input", e => {
 });
 
 phone.addEventListener("input", e => {
-  const normalized = normalizePhone(e.target.value);
-  if (!normalized) {
-    showError(e.target, "Enter a valid mobile number.", "phoneError");
+  if (e.target.value.length !== 10) {
+    showError(e.target, "Phone must be 11 digits.", "phoneError");
   } else {
     hideError(e.target, "phoneError");
   }
