@@ -125,57 +125,14 @@
           class="w-full bg-gray-800 border border-gray-700 rounded-md pl-12 pr-3 py-2 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
       </div>
 
-      <!-- Gender -->
-      <label class="block">
-        <span class="text-sm text-gray-300">Gender</span>
-        <select id="experience" required
-          class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-          <option value="" disabled selected>-- Select --</option>
-          <option>Male</option>
-          <option>Female</option>
-        </select>
-      </label>
-      
-       <!-- Experience -->
-      <!-- <label class="block">
-        <span class="text-sm text-gray-300">Do you have experience?</span>
-        <select id="experience" required
-          class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-          <option value="" disabled selected>-- Select --</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      </label> -->
+      <select id="experience" required
+  class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+  <option value="" disabled selected>-- Gender --</option>
+  <option>Male</option>
+  <option>Female</option>
+  <option>Prefer not to say</option>
+</select>
 
-      <!-- Experience Years Dropdown -->
-     <!--  <div id="experienceYearsContainer" class="hidden">
-        <label class="block mt-2">
-          <span class="text-sm text-gray-300">How many years of experience?</span>
-          <select id="experienceYears"
-            class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-            <option value="" disabled selected>-- Select Experience Range --</option>
-            <option>0-2 years</option>
-            <option>2-4 years</option>
-            <option>4-6 years</option>
-            <option>8-10 years</option>
-            <option>10+ years</option>
-          </select>
-        </label>
-      </div> -->
-
-      <!-- <label class="block">
-        <span class="text-sm text-gray-300">Academic Qualification</span>
-        <select id="qualification" required
-          class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
-          <option value="" disabled selected>-- Select Qualification --</option>
-          <option>Intermediate</option>
-          <option>O/A Levels</option>
-          <option>Bachelors</option>
-          <option>Masters</option>
-        </select>
-      </label> -->
-
-      
 
       <input type="hidden" id="jobPosition">
 
@@ -322,21 +279,6 @@ cvInput.addEventListener("change", () => {
   }
 });
 
-// Experience toggle
-const expSelect = document.getElementById("experience");
-const expYearsContainer = document.getElementById("experienceYearsContainer");
-const expYearsInput = document.getElementById("experienceYears");
-expSelect.addEventListener("change", () => {
-  if (expSelect.value === "Yes") {
-    expYearsContainer.classList.remove("hidden");
-    expYearsInput.required = true;
-  } else {
-    expYearsContainer.classList.add("hidden");
-    expYearsInput.required = false;
-    expYearsInput.value = "";
-  }
-});
-
 // File to Base64 helper
 function toBase64(file) {
   return new Promise((resolve, reject) => {
@@ -414,11 +356,9 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("jobDescription", desc);
     formData.append("fullName", document.getElementById("fullName").value);
     formData.append("age", document.getElementById("age").value);
-    formData.append("email", document.getElementById("email").value);
     formData.append("phone", "92" + document.getElementById("phone").value);
-    // formData.append("qualification", document.getElementById("qualification").value);
-    formData.append("experience", document.getElementById("experience").value);
-    formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
+    formData.append("email", document.getElementById("email").value);
+    formData.append("gender", document.getElementById("gender").value);
     formData.append("fileData", fileBase64);
     formData.append("fileName", fileName);
     formData.append("mimeType", mimeType);
@@ -512,22 +452,16 @@ phone.addEventListener("input", e => {
   }
 });
 
-expSelect.addEventListener("input", e => {
+// Gender Validation
+const gender = document.getElementById("gender");
+gender.addEventListener("change", e => {
   if (!e.target.value) {
-    showError(e.target, "Select experience option.", "expError");
+    showError(e.target, "Please select a gender.", "genderError");
   } else {
-    hideError(e.target, "expError");
+    hideError(e.target, "genderError");
   }
 });
 
-// const qualification = document.getElementById("qualification");
-// qualification.addEventListener("input", e => {
-//   if (!e.target.value) {
-//     showError(e.target, "Select a qualification.", "qualificationError");
-//   } else {
-//     hideError(e.target, "qualificationError");
-//   }
-// });
 
 // On Submit → Scroll to first error
 applyForm.addEventListener("submit", e => {
