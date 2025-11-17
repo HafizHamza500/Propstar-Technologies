@@ -323,19 +323,19 @@ cvInput.addEventListener("change", () => {
 });
 
 // Experience toggle
-const expSelect = document.getElementById("experience");
-const expYearsContainer = document.getElementById("experienceYearsContainer");
-const expYearsInput = document.getElementById("experienceYears");
-expSelect.addEventListener("change", () => {
-  if (expSelect.value === "Yes") {
-    expYearsContainer.classList.remove("hidden");
-    expYearsInput.required = true;
-  } else {
-    expYearsContainer.classList.add("hidden");
-    expYearsInput.required = false;
-    expYearsInput.value = "";
-  }
-});
+// const expSelect = document.getElementById("experience");
+// const expYearsContainer = document.getElementById("experienceYearsContainer");
+// const expYearsInput = document.getElementById("experienceYears");
+// expSelect.addEventListener("change", () => {
+//   if (expSelect.value === "Yes") {
+//     expYearsContainer.classList.remove("hidden");
+//     expYearsInput.required = true;
+//   } else {
+//     expYearsContainer.classList.add("hidden");
+//     expYearsInput.required = false;
+//     expYearsInput.value = "";
+//   }
+// });
 
 // File to Base64 helper
 function toBase64(file) {
@@ -417,8 +417,8 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("email", document.getElementById("email").value);
     formData.append("phone", "92" + document.getElementById("phone").value);
     // formData.append("qualification", document.getElementById("qualification").value);
-    formData.append("experience", document.getElementById("experience").value);
-    formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
+    // formData.append("experience", document.getElementById("experience").value);
+    // formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
     formData.append("fileData", fileBase64);
     formData.append("fileName", fileName);
     formData.append("mimeType", mimeType);
@@ -512,13 +512,13 @@ phone.addEventListener("input", e => {
   }
 });
 
-expSelect.addEventListener("input", e => {
-  if (!e.target.value) {
-    showError(e.target, "Select experience option.", "expError");
-  } else {
-    hideError(e.target, "expError");
-  }
-});
+// expSelect.addEventListener("input", e => {
+//   if (!e.target.value) {
+//     showError(e.target, "Select experience option.", "expError");
+//   } else {
+//     hideError(e.target, "expError");
+//   }
+// });
 
 // const qualification = document.getElementById("qualification");
 // qualification.addEventListener("input", e => {
