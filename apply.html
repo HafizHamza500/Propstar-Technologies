@@ -180,7 +180,7 @@
 
       <label class="block">
         <span class="text-sm text-gray-300">Upload CV</span>
-        <input id="cv" type="file" accept=".pdf,.doc,.docx"
+        <input id="cv" name="cv" type="file" accept=".pdf,.doc,.docx"
           class="block w-full mt-1 text-sm text-gray-400
             file:mr-3 file:py-2 file:px-4 file:rounded-md
             file:border-0 file:bg-yellow-500 file:text-black
@@ -311,13 +311,32 @@ const cvError = document.getElementById("cvError");
 cvInput.addEventListener("change", () => {
   const file = cvInput.files[0];
   if (file) {
-    const allowed = ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-    if (!allowed.includes(file.type)) {
-      cvError.classList.remove("hidden");
-      cvInput.value = "";
+    const allowedMime = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+
+    // If browser doesn't provide MIME type (some older browsers/OS combos), fall back to extension check
+    const name = file.name || "";
+    const extOk = /\.(pdf|docx?|DOCX?)$/.test(name);
+
+    if (file.type) {
+      if (!allowedMime.includes(file.type)) {
+        cvError.classList.remove("hidden");
+        cvInput.value = "";
+        return;
+      }
     } else {
-      cvError.classList.add("hidden");
+      // No MIME: rely on extension
+      if (!extOk) {
+        cvError.classList.remove("hidden");
+        cvInput.value = "";
+        return;
+      }
     }
+
+    cvError.classList.add("hidden");
   }
 });
 
@@ -346,38 +365,23 @@ function toBase64(file) {
   });
 }
 
- function btnsubmit(formData)  {
-  // Convert FormData to a plain object
-  const dataObject = {};
-  for (let [key, value] of formData.entries()) {
-    dataObject[key] = value;
-  }
-
-  console.log("Sending data to API:", dataObject);
-
-  const requestBody = {
-    values: dataObject
-  };
-
+function btnsubmit(formData) {
+  // Send FormData multipart/form-data so server can receive the file as a file upload.
+  // Do NOT set Content-Type header; browser will set the boundary for multipart.
   return fetch("https://propstar.evagron.com/api/method/hrm_addons.web_form_handler.applicant_web_form", {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(requestBody)
+    body: formData
   })
-    .then(response => {
-      console.log("Response status:", response.status);
-      // Parse response first
-      return response.json().then(data => {
-        if (response.status === 200 || response.ok) {
-          console.log("API Response Success:", data);
-          return { success: true, data: data };
-        } else {
-          console.error("API Error Response:", data);
-          throw new Error(`HTTP error! status: ${response.status} - ${data.message || JSON.stringify(data)}`);
-        }
-      });
+    .then(async response => {
+      const text = await response.text();
+      let data = null;
+      try { data = JSON.parse(text); } catch (e) { data = text; }
+      if (response.ok) {
+        return { success: true, data };
+      } else {
+        console.error("API Error Response:", data);
+        return { success: false, error: typeof data === 'string' ? data : (data && data.message) || JSON.stringify(data) };
+      }
     })
     .catch(error => {
       console.error("Error fetching API:", error);
@@ -422,6 +426,12 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("fileData", fileBase64);
     formData.append("fileName", fileName);
     formData.append("mimeType", mimeType);
+    // Also append actual File object so server endpoints that expect multipart uploads receive the file
+    if (file) {
+      formData.append("cv", file, fileName);
+      // Keep a copy under a generic key some servers might expect
+      formData.append("file", file, fileName);
+    }
 
 
 
