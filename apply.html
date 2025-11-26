@@ -291,7 +291,7 @@ function toBase64(file) {
 
  function btnsubmit(formData)  {
   // Send FormData directly so the browser sets multipart/form-data boundary
-  return fetch("https://propstar.evagron.com/api/method/hrm_addons.web_form_handler.applicant_web_form", {
+  return fetch("https://beta.propstarportal.com/api/method/hrm_addons.web_form_handler.applicant_web_form", {
     method: 'POST',
     body: formData
   })
