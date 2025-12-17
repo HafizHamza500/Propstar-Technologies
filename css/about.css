@@ -460,6 +460,7 @@ img{
   font-size:3rem;
   letter-spacing:-1px;
   color: #fff;
+  font-weight: 400;
 }
 
 .ps-section p{
@@ -537,7 +538,7 @@ img{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.6);
-  backdrop-filter: blur(6px); 
+  backdrop-filter: blur(6px);
   display:flex;
   align-items:center;
   justify-content:center;
