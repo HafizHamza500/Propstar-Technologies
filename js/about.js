@@ -330,3 +330,50 @@ window.addEventListener("scroll", closePopup);
       }
     });
 
+
+    (() => {
+
+  /* REVEAL OBSERVER */
+  const psRevealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('ps-visible');
+        psRevealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.ps-reveal')
+    .forEach(el => psRevealObserver.observe(el));
+
+
+  /* POPUP */
+  const psPopup = document.getElementById('psPopup');
+  const psPopupImg = document.getElementById('psPopupImg');
+  const psCloseBtn = document.getElementById('psClose');
+
+  if (!psPopup || !psPopupImg) return;
+
+  document.querySelectorAll('.ps-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const img = card.querySelector('img');
+      if (!img) return;
+
+      psPopupImg.src = img.src;
+      psPopup.classList.add('ps-active');
+      document.body.style.overflow = 'hidden'; // cinematic lock
+    });
+  });
+
+  const closePopup = () => {
+    psPopup.classList.remove('ps-active');
+    document.body.style.overflow = '';
+  };
+
+  psCloseBtn?.addEventListener('click', closePopup);
+
+  psPopup.addEventListener('click', e => {
+    if (e.target === psPopup) closePopup();
+  });
+
+})();
