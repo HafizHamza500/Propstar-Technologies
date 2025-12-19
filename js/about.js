@@ -6,7 +6,7 @@ window.history.scrollRestoration = "manual";
       background: { color: "transparent" },
       fpsLimit: 60,
       interactivity: {
-        detectsOn: "canvas", // ✅ restricts interaction to hero only
+        detectsOn: "canvas", //restricts interaction to hero only
         events: {
           onHover: { enable: true, mode: "grab" },
           onClick: { enable: true, mode: "push" },
@@ -334,46 +334,48 @@ window.addEventListener("scroll", closePopup);
     (() => {
 
   /* REVEAL OBSERVER */
-  const psRevealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('ps-visible');
-        psRevealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
-
-  document.querySelectorAll('.ps-reveal')
-    .forEach(el => psRevealObserver.observe(el));
-
-
-  /* POPUP */
-  const psPopup = document.getElementById('psPopup');
-  const psPopupImg = document.getElementById('psPopupImg');
-  const psCloseBtn = document.getElementById('psClose');
-
-  if (!psPopup || !psPopupImg) return;
-
-  document.querySelectorAll('.ps-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const img = card.querySelector('img');
-      if (!img) return;
-
-      psPopupImg.src = img.src;
-      psPopup.classList.add('ps-active');
-      document.body.style.overflow = 'hidden'; // cinematic lock
-    });
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('ps-visible');
+      observer.unobserve(entry.target);
+    }
   });
+},{threshold:0.2});
 
-  const closePopup = () => {
-    psPopup.classList.remove('ps-active');
-    document.body.style.overflow = '';
-  };
+document.querySelectorAll('.ps-reveal')
+  .forEach(el=>observer.observe(el));
 
-  psCloseBtn?.addEventListener('click', closePopup);
-
-  psPopup.addEventListener('click', e => {
-    if (e.target === psPopup) closePopup();
+/* SKELETON REMOVE ON LOAD */
+document.querySelectorAll('.ps-card img').forEach(img=>{
+  img.addEventListener('load',()=>{
+    img.style.opacity = 1;
+    img.previousElementSibling?.remove();
   });
+});
+
+/* POPUP */
+const popup = document.getElementById('psPopup');
+const popupImg = document.getElementById('psPopupImg');
+const closeBtn = document.getElementById('psClose');
+
+document.querySelectorAll('.ps-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    const img = card.querySelector('img');
+    popupImg.src = img.src;
+    popup.classList.add('ps-active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+const closePopup = ()=>{
+  popup.classList.remove('ps-active');
+  document.body.style.overflow = '';
+};
+
+closeBtn.addEventListener('click', closePopup);
+popup.addEventListener('click',e=>{
+  if(e.target === popup) closePopup();
+});
 
 })();

@@ -159,59 +159,60 @@ html::-webkit-scrollbar-thumb:hover {
   background: #b58920;
 }
 
+
+
+/* BASE */
 #home-container {
   font-weight: 400;
   color: #111;
+  overflow: hidden;
 }
 
+/* WRAPPER */
 #hero12-header76 {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 2rem;
   width: 100%;
   padding: 1rem 0.5rem;
 }
 
 #hero12-max-width {
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex-direction: row;
   width: 100%;
   max-width: 1200px;
+  gap: 2rem;
 }
 
+/* LEFT CONTENT */
 #hero12-column1 {
   width: 50%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
   gap: 1rem;
+
   position: sticky;
   top: 50%;
   transform: translateY(-50%);
-  height: fit-content;
 }
 
 .hero12-heading {
   font-size: 3rem;
+  font-weight: 600;
   background: linear-gradient(90deg, #f0b53f, #c78c18);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin: 0;
 }
 
 .hero12-subtext {
   font-size: 1.3rem;
   color: #cacaca;
   line-height: 1.6;
-  margin: 0 0 1rem 0;
   max-width: 90%;
 }
 
+/* RIGHT CONTENT */
 #hero12-content {
   width: 50%;
   height: 850px;
@@ -221,44 +222,70 @@ html::-webkit-scrollbar-thumb:hover {
   overflow: hidden;
 }
 
+/* SCROLLING COLUMNS */
 #hero12-column2,
 #hero12-column3 {
   width: 50%;
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
 
-#hero12-content img {
-  border-radius: 12px;
-  height: 400px;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.3, 1),
-              box-shadow 0.6s cubic-bezier(0.25, 1, 0.3, 1);
   will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
-.scroll-down {
-  animation: scrollDown 20s linear infinite;
-}
-.scroll-up {
-  animation: scrollUp 20s linear infinite;
-}
-
-@keyframes scrollDown {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+/* IMAGES */
+#hero12-content img {
+  height: 400px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
 }
 
-@keyframes scrollUp {
-  0% { transform: translateY(-50%); }
-  100% { transform: translateY(0); }
+/* INFINITE SCROLL (DESKTOP) */
+.scroll-vertical-down {
+  animation: scrollDownSmooth 120s linear infinite;
 }
 
+.scroll-vertical-up {
+  animation: scrollUpSmooth 120s linear infinite;
+}
+
+.scroll-vertical-down1 {
+  animation: scrollDownSmooth 90s linear infinite;
+}
+
+.scroll-vertical-up1 {
+  animation: scrollUpSmooth 90s linear infinite;
+}
+
+@keyframes scrollDownSmooth {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-500%); }
+}
+
+@keyframes scrollUpSmooth {
+  from { transform: translateY(-500%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes scrollDownSmooth1 {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-500%); }
+}
+
+@keyframes scrollUpSmooth1 {
+  from { transform: translateY(-500%); }
+  to   { transform: translateY(0); }
+}
+
+/* FADE OVERLAYS */
 .fade-overlay {
   position: absolute;
-  z-index: 10;
   pointer-events: none;
+  z-index: 10;
 }
 
 .fade-overlay.top {
@@ -266,32 +293,36 @@ html::-webkit-scrollbar-thumb:hover {
   left: 0;
   right: 0;
   height: 80px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 1), transparent);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
 }
+
 .fade-overlay.bottom {
   bottom: 0;
   left: 0;
   right: 0;
   height: 80px;
-  background: linear-gradient(to top, rgba(0,0,0,1), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
 }
+
 .fade-overlay.left {
   top: 0;
   bottom: 0;
   left: 0;
   width: 60px;
-  background: linear-gradient(to right, rgba(0,0,0,0.7), transparent);
+  background: linear-gradient(to right, rgba(0,0,0,0.8), transparent);
 }
+
 .fade-overlay.right {
   top: 0;
   bottom: 0;
   right: 0;
   width: 60px;
-  background: linear-gradient(to left, rgba(0,0,0,0.7), transparent);
+  background: linear-gradient(to left, rgba(0,0,0,0.8), transparent);
 }
 
-
+/* MOBILE */
 @media (max-width: 768px) {
+
   #hero12-max-width {
     flex-direction: column;
     gap: 24px;
@@ -301,16 +332,14 @@ html::-webkit-scrollbar-thumb:hover {
     width: 100%;
     position: static;
     transform: none;
-    align-items: center;
     text-align: center;
-
+    align-items: center;
   }
 
   #hero12-content {
     width: 100%;
-    flex-direction: column;
     height: auto;
-    gap: 20px;
+    flex-direction: column;
   }
 
   #hero12-column2,
@@ -320,48 +349,35 @@ html::-webkit-scrollbar-thumb:hover {
     gap: 16px;
   }
 
-  #hero12-column2 {
-    animation: scrollRight 20s linear infinite;
-  }
-
-  #hero12-column3 {
-    animation: scrollLeft 20s linear infinite;
-  }
-
   #hero12-content img {
     height: 240px;
-    flex: 0 0 20px;
+    width: auto;
   }
 
-  @keyframes scrollRight {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+  .scroll-vertical-down {
+    animation: scrollRightSmooth 26s linear infinite;
   }
 
-  @keyframes scrollLeft {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(0); }
+  .scroll-vertical-up {
+    animation: scrollLeftSmooth 26s linear infinite;
   }
-  .mobile-only {
-    display: block;
+
+  @keyframes scrollRightSmooth {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
-  .scroll-down,
-  .scroll-up {
-    animation: none;
+
+  @keyframes scrollLeftSmooth {
+    from { transform: translateX(-50%); }
+    to   { transform: translateX(0); }
   }
-  .fade-overlay.top {
-  background: linear-gradient(to bottom, rgba(0, 0, 0,0.8), transparent);
+
+  .fade-overlay.left,
+  .fade-overlay.right {
+    display: none;
+  }
 }
-.fade-overlay.bottom {
-  background: linear-gradient(to top, rgba(0, 0, 0,0.8), transparent);
-}
-.fade-overlay.left {
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.8), transparent);
-}
-.fade-overlay.right {
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.8), transparent);
-}
-}
+
 
 #teamAnimation {
   width: 400px;
