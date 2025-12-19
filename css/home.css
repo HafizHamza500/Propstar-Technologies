@@ -253,12 +253,30 @@ html::-webkit-scrollbar-thumb:hover {
   animation: scrollUpSmooth 120s linear infinite;
 }
 
+.scroll-vertical-down1 {
+  animation: scrollDownSmooth 90s linear infinite;
+}
+
+.scroll-vertical-up1 {
+  animation: scrollUpSmooth 90s linear infinite;
+}
+
 @keyframes scrollDownSmooth {
   from { transform: translateY(0); }
   to   { transform: translateY(-500%); }
 }
 
 @keyframes scrollUpSmooth {
+  from { transform: translateY(-500%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes scrollDownSmooth1 {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-500%); }
+}
+
+@keyframes scrollUpSmooth1 {
   from { transform: translateY(-500%); }
   to   { transform: translateY(0); }
 }
