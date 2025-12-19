@@ -96,25 +96,25 @@
     .ceo-img-wrapper {
       position: relative;
       z-index: 10;
-      margin-left: -1.5rem;
+      margin-left: -2rem;
       display: flex;
       flex-direction: column;
     }
     @media (min-width: 768px) {
-      .ceo-img-wrapper { margin-left: -4rem; }
+      .ceo-img-wrapper { margin-left: -5rem; }
     }
     ::selection{
   color: #fbbf24;
   background-color: whitesmoke;
 }
     @media (min-width: 1280px) {
-      .ceo-img-wrapper { margin-left: -4rem; }
+      .ceo-img-wrapper { margin-left: -5rem; }
     }
 
 
 
     @media (min-width: 320px) {
-      .ceo-img-wrapper { margin-left: -3rem; }
+      .ceo-img-wrapper { margin-left: -4rem; }
     }
 
     .ceo-img {
@@ -127,10 +127,7 @@
         object-fit: cover;
       }
     }
-
     @media (min-width: 2560px) {
-
-
     }
 
     /* Label Styling */
