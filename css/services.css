@@ -147,7 +147,7 @@
     @media(max-width:768px){
       .campaign-grid{
         grid-template-columns:1fr;
-        row-gap:1.8rem;   
+        row-gap:1.8rem;
         column-gap:0;
 
       }
@@ -687,11 +687,10 @@ body {
   cursor: pointer;
   transition: color 0.3s ease;
 }
-
 .button-prev:hover{
   color: #f59e0b;
 }
-.button-next{
+ .button-next{
   background: none;
  border:2px solid #333;
  padding: 0 10px;
