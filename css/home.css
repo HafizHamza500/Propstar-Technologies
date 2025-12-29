@@ -246,38 +246,20 @@ html::-webkit-scrollbar-thumb:hover {
 
 /* INFINITE SCROLL (DESKTOP) */
 .scroll-vertical-down {
-  animation: scrollDownSmooth 120s linear infinite;
+  animation: scrollDownSmooth 15s linear infinite;
 }
 
 .scroll-vertical-up {
-  animation: scrollUpSmooth 120s linear infinite;
-}
-
-.scroll-vertical-down1 {
-  animation: scrollDownSmooth 90s linear infinite;
-}
-
-.scroll-vertical-up1 {
-  animation: scrollUpSmooth 90s linear infinite;
+  animation: scrollUpSmooth 15s linear infinite;
 }
 
 @keyframes scrollDownSmooth {
   from { transform: translateY(0); }
-  to   { transform: translateY(-500%); }
+  to   { transform: translateY(-100%); }
 }
 
 @keyframes scrollUpSmooth {
-  from { transform: translateY(-500%); }
-  to   { transform: translateY(0); }
-}
-
-@keyframes scrollDownSmooth1 {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-500%); }
-}
-
-@keyframes scrollUpSmooth1 {
-  from { transform: translateY(-500%); }
+  from { transform: translateY(-100%); }
   to   { transform: translateY(0); }
 }
 
