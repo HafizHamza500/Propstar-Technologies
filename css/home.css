@@ -246,11 +246,11 @@ html::-webkit-scrollbar-thumb:hover {
 
 /* INFINITE SCROLL (DESKTOP) */
 .scroll-vertical-down {
-  animation: scrollDownSmooth 15s linear infinite;
+  animation: scrollDownSmooth 20s linear infinite;
 }
 
 .scroll-vertical-up {
-  animation: scrollUpSmooth 15s linear infinite;
+  animation: scrollUpSmooth 20s linear infinite;
 }
 
 @keyframes scrollDownSmooth {
