@@ -337,77 +337,120 @@ function toBase64(file) {
   });
 }
 
+async function submitToERP(formData) {
+  try {
+    const res = await fetch(
+      "https://dev.propstarportal.com/api/hrmaddon/submitApplication",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const data = await res.json();
+    return {
+      success: res.ok,
+      data
+    };
+  } catch (err) {
+    console.error("ERP Error:", err);
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
+
+
+async function submitToSheet(formData) {
+  try {
+    const res = await fetch(
+      "https://script.google.com/macros/s/AKfycbzdSOBQU_KsGNlPRg6zLdASjZ51VLL_QfMvRTu1VrMQD3p29_vTJDXelf24Vt5DaNmpyA/exec",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const data = await res.json();
+
+    return {
+      success: data.result === "success",
+      data
+    };
+  } catch (err) {
+    console.error("Sheet Error:", err);
+    return {
+      success: false,
+      error: err.message
+    };
+  }
+}
+
+
 // Form Submit
 const applyForm = document.getElementById("applyForm");
 applyForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const submitBtn = document.getElementById("submitBtn");
   const btnText = document.getElementById("btnText");
+
   btnText.textContent = "Submitting...";
   submitBtn.disabled = true;
 
   try {
     const file = cvInput.files[0];
-    let fileBase64 = "";
-    let fileName = "";
-    let mimeType = "";
+    const formData = new FormData();
+
+    formData.append("jobTitle", job);
+    formData.append("jobDescription", desc);
+    formData.append("fullName", fullName.value);
+    formData.append("age", ageInput.value);
+    formData.append("email", email.value);
+    formData.append("phone", phone.value);
+    formData.append("qualification", qualification.value);
+    formData.append("experience", expSelect.value);
+    formData.append("experienceYears", expYearsInput.value || "0");
 
     if (file) {
-      const base64File = await toBase64(file);
-      fileBase64 = base64File.split(",")[1];
-      fileName = file.name;
-      mimeType = file.type;
+      formData.append("cv", file);
+      formData.append("fileName", file.name);
+      formData.append("mimeType", file.type);
     }
 
-    const formData = new FormData();
-    formData.append("jobTitle", document.getElementById("jobPosition").value);
-    formData.append("jobDescription", desc);
-    formData.append("fullName", document.getElementById("fullName").value);
-    formData.append("age", document.getElementById("age").value);
-    formData.append("email", document.getElementById("email").value);
-    formData.append("phone", document.getElementById("phone").value);
-    formData.append("qualification", document.getElementById("qualification").value);
-    formData.append("experience", document.getElementById("experience").value);
-    formData.append("experienceYears", document.getElementById("experienceYears").value || "0");
-    formData.append("fileData", fileBase64);
-    formData.append("fileName", fileName);
-    formData.append("mimeType", mimeType);
+    // SEND TO BOTH SYSTEMS
+    const [erpRes, sheetRes] = await Promise.all([
+      submitToERP(formData),
+      submitToSheet(formData)
+    ]);
 
-    console.log(formData);
-
-    const res = await fetch("https://script.google.com/macros/s/AKfycbzdSOBQU_KsGNlPRg6zLdASjZ51VLL_QfMvRTu1VrMQD3p29_vTJDXelf24Vt5DaNmpyA/exec", {
-      method: "POST",
-      body: formData,
-    });
-
-    const result = await res.json();
-    if (result.result === "success") {
-      const userName = document.getElementById("fullName").value;
+    if (erpRes.success && sheetRes.success) {
       Swal.fire({
         icon: "success",
-        title: "Application Received",
-        html: `<b>${userName}</b>, we’ve received your application.<br>
-               You’ll get an email confirmation soon. Thanks for applying!`,
+        title: "Application Submitted",
+        html: `<b>${fullName.value}</b>,<br>Your application has been received.`,
         confirmButtonColor: "#facc15",
         background: "#0A111B",
         color: "#fff"
       });
+
       applyForm.reset();
       expYearsContainer.classList.add("hidden");
     } else {
       Swal.fire({
-        icon: "error",
-        title: "Submission Failed",
-        text: result.error || "Something went wrong, please try again!",
+        icon: "warning",
+        title: "Partial Submission",
+        text: "Application saved but one system failed. HR will review manually.",
         confirmButtonColor: "#f87171"
       });
     }
+
   } catch (err) {
-    console.error("Error:", err);
     Swal.fire({
       icon: "error",
-      title: "Oops!",
-      text: "Something went wrong. Please try again.",
+      title: "Error",
+      text: "Submission failed. Please try again.",
       confirmButtonColor: "#f87171"
     });
   } finally {
