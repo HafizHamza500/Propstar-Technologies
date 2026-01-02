@@ -340,7 +340,7 @@ function toBase64(file) {
 async function submitToERP(formData) {
   try {
     const res = await fetch(
-      "https://dev.propstarportal.com/api/method/hrm_addons.web_form_handler.applicant_web_from",
+      "https://dev.propstarportal.com/api/method/hrm_addons.web_form_handler.applicant_web_form",
       {
         method: "POST",
         body: formData
