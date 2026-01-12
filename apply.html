@@ -122,6 +122,19 @@
       <input id="phone" type="text" placeholder="Phone Number" required
         class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-yellow-400 focus:outline-none">
 
+          <!-- Gender  -->
+      <div>
+        <span class="text-sm text-gray-300">Gender</span>
+        <div class="mt-2 flex gap-2">
+          <button type="button" id="genderMale" data-value="Male" class="gender-toggle px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-white">Male</button>
+          <button type="button" id="genderFemale" data-value="Female" class="gender-toggle px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-white">Female</button>
+          <button type="button" id="genderPrefer" data-value="Prefer not to say" class="gender-toggle px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-white">Prefer not to say</button>
+        </div>
+        <input type="hidden" id="gender" value="">
+        <p id="genderError" class="hidden text-red-500 text-sm mt-1">❌ Please select gender.</p>
+      </div>
+
+
       <!-- Experience -->
       <label class="block">
         <span class="text-sm text-gray-300">Do you have experience?</span>
@@ -312,6 +325,19 @@ cvInput.addEventListener("change", () => {
   }
 });
 
+// Gender toggle
+const genderButtons = document.querySelectorAll(".gender-toggle");
+const genderInput = document.getElementById("gender");
+genderButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    genderButtons.forEach(btn => btn.classList.remove("bg-yellow-400", "text-black"));
+    button.classList.add("bg-yellow-400", "text-black");
+    genderInput.value = button.getAttribute("data-value");
+    hideError(genderInput, "genderError");
+  });
+});
+
+
 // Experience toggle
 const expSelect = document.getElementById("experience");
 const expYearsContainer = document.getElementById("experienceYearsContainer");
@@ -369,7 +395,7 @@ async function submitToSheet(formData) {
       "https://script.google.com/macros/s/AKfycbzdSOBQU_KsGNlPRg6zLdASjZ51VLL_QfMvRTu1VrMQD3p29_vTJDXelf24Vt5DaNmpyA/exec",
       {
         method: "POST",
-        body: formData
+        body: formData  
       }
     );
 
@@ -387,7 +413,6 @@ async function submitToSheet(formData) {
     };
   }
 }
-
 
 // Form Submit
 const applyForm = document.getElementById("applyForm");
@@ -410,6 +435,7 @@ applyForm.addEventListener("submit", async (e) => {
     formData.append("age", ageInput.value);
     formData.append("email", email.value);
     formData.append("phone", phone.value);
+    formData.append("gender", genderInput.value);
     formData.append("qualification", qualification.value);
     formData.append("experience", expSelect.value);
     formData.append("experienceYears", expYearsInput.value || "0");
