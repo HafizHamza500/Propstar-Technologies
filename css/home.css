@@ -750,3 +750,13 @@ html::-webkit-scrollbar-thumb:hover {
   line-height: 1;
 }
 
+#zoomImgDesktop {
+  transform: scale(0.5);
+  will-change: transform;
+}
+
+#zoomTextDesktop {
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 0.3s ease;
+}

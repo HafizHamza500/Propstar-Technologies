@@ -270,23 +270,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const textD = document.getElementById('zoomTextDesktop');
     const sectionD = document.getElementById('zoomSectionDesktop');
 
-    window.addEventListener('scroll', () => {
-      if (!sectionD || window.innerWidth < 1024) return;
+    // window.addEventListener('scroll', () => {
+    //   if (!sectionD || window.innerWidth < 1024) return;
 
-      const rect = sectionD.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+    //   const rect = sectionD.getBoundingClientRect();
+    //   const windowHeight = window.innerHeight;
 
-      let scrollPercent = 1 - rect.top / windowHeight;
-      scrollPercent = Math.min(Math.max(scrollPercent, 0), 1);
+    //   let scrollPercent = 1 - rect.top / windowHeight;
+    //   scrollPercent = Math.min(Math.max(scrollPercent, 0), 1);
 
-      const imgScale = 0.5 + (scrollPercent * 0.5);
-      imgD.style.transform = `scale(${imgScale})`;
+    //   const imgScale = 0.5 + (scrollPercent * 0.5);
+    //   imgD.style.transform = `scale(${imgScale})`;
 
-      const textScale = 1 + (scrollPercent * 0.5);
-      textD.style.transform = `scale(${textScale})`;
+    //   const textScale = 1 + (scrollPercent * 0.5);
+    //   textD.style.transform = `scale(${textScale})`;
 
-      textD.style.opacity = scrollPercent > 0.1 ? 1 : 0;
-    });
+    //   textD.style.opacity = scrollPercent > 0.1 ? 1 : 0;
+    // });
+
+    let hasEntered = false;
+
+window.addEventListener('scroll', () => {
+  if (!sectionD || window.innerWidth < 1024) return;
+
+  const rect = sectionD.getBoundingClientRect();
+  const windowHeight = window.innerHeight;
+
+  if (rect.top < windowHeight * 0.9) {
+    hasEntered = true;
+  }
+
+  if (!hasEntered) return;
+
+  let scrollPercent = 1 - rect.top / windowHeight;
+  scrollPercent = Math.min(Math.max(scrollPercent, 0), 1);
+
+  const imgScale = 0.5 + (scrollPercent * 0.5);
+  imgD.style.transform = `scale(${imgScale})`;
+
+  const textScale = 1 + (scrollPercent * 0.5);
+  textD.style.transform = `scale(${textScale})`;
+
+  textD.style.opacity = scrollPercent > 0.1 ? 1 : 0;
+});
 
 
     
